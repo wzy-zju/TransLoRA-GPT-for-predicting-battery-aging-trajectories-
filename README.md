@@ -1,5 +1,9 @@
-# TransLoRA-GPT-for-predicting-battery-aging-trajectories-
+# TransLoRA-GPT
+## About
+This repository contains the code and resources of the following paper:
+
 Transferable generative pre-trained transformer using low-rank adaptation (TransLoRA-GPT): a framework for predicting battery aging trajectories from charging fragments
 
-Abstract
-Accurate battery lifetime prediction is critical for operational safety and battery management. However, limited data and poor model transferability make this task challenging. This paper proposes the transferable generative pre-trained transformer using low-rank adaptation (TransLoRA-GPT) to address the challenges. Specifically, depending on whether the source and target domains are the same, a base model and a transferred model are fine-tuned from the large language model (LLM), respectively. In the evaluation phase, by applying feature engineering from the charging data of the first 20 cycles, the model can predict the state of health (SOH) aging trajectory for the subsequent 100 cycles. The results indicate that by fine-tuning only 3.33% of the total parameters, the model outperforms traditional models with an average root mean square error (RMSE) of 0.0128. Furthermore, it exhibits excellent transferability across different charging/discharging strategies (average RMSE of 0.0171) and battery types (average RMSE of 0.0594). Overall, this work highlights the potential of LLM-based transferable predictive models.
+## Overview of the framework
+This paper proposes an LLM-based framework, named the transferable generative pre-trained transformer using low-rank adaptation (TransLoRA-GPT). The integration of feature engineering reduces the model's dependency on complete charge-discharge data, alleviating the issue of data scarcity. The architectural modifications and low-rank adaptation (LoRA) technique provide the model with a feature-to-SOH mapping capability. Lastly, the deployment process ensures the model's transferability.
+The proposed methodology involves three stages: First, a base model, TransLoRA-GPT (base), is developed on a source domain. Second, to leverage the model's transfer learning capabilities, the base model undergoes a lightweight adaptation process using only 10% of the data from the target domain, resulting in the TransLoRA-GPT (transferred) model. Finally, the trained model is evaluated by predicting the SOH degradation trajectory of a test battery over the subsequent 100 cycles using only features from its first 20 cycles.
