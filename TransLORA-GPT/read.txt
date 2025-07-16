@@ -1,5 +1,0 @@
-到头来还是阶段2失败了呀，确实有些异想天开，罢了
-
-但是
-①gpt_layer=6 ②给pse和layernorm可调 ③windows=50 ④dropoout和lr不用调
-此时的效果倒是最好的
