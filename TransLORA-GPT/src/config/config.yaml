@@ -1,0 +1,90 @@
+train: True  
+loss: "MSE"  # "MSE", "MAE" , "MAPE"  Note: There's an issue here! In my paper it should be RMSE, but since it's already done, just note this when putting it on GitHub
+
+seed: 116
+device: "cuda"
+bsz: 256
+lr: 0.0001
+autotrain: false
+
+
+eval_freq: 2
+loss_alpha: 0.8
+num_features: 2
+pred_len: 100
+smooth:  True  # Whether to smooth the final results
+normalied: false  
+
+
+GPT2:
+  # Below are fixed parameters, do not adjust
+  vocab_size: 50257
+  context_length: 1024
+  drop_rate: 0.0
+  qkv_bias: True
+  emb_dim: 768
+  n_heads: 12
+  # Parameters below can be adjusted
+  gpt_layers: 12
+  fine_tune: 'LoRA'         #['freeze_all_gpt', 'no_freeze', 'LoRA'] 
+  rank: 8
+  alpha: 16
+  #①Only tune my newly added parts 0.13% ②Full fine-tuning 100%  ③LoRA tunes linear + my parts 3.12%
+  # freeze_all_gpt: True
+
+data_process:
+  # Define all available datasets and their path formats
+  datasets:
+    INR:
+      base_ui_path: "src/data/INR18650_{}_ui.npy"
+      base_cap_path: "src/data/INR18650_{}_cap.npy"
+    CS2:
+      base_ui_path: "src/data/CS2_{}_ui.npy"
+      base_cap_path: "src/data/CS2_{}_cap.npy"
+    CX2:
+      base_ui_path: "src/data/CX2_{}_ui.npy"
+      base_cap_path: "src/data/CX2_{}_cap.npy"
+    B000:
+      base_ui_path: "src/data/B000_{}_ui.npy"
+      base_cap_path: "src/data/B000_{}_cap.npy"
+
+  sets_to_process:
+    - name: 'CS2'
+      files: [] # List all participating batteries here
+    - name: 'INR'
+      files: [] # Leave empty or remove this line to skip INR dataset processing 1,2,3,4
+    - name: 'CX2'
+      files: [] # Leave empty or remove this line to skip CX2 dataset processing 34,36,37,38
+    - name: 'B000'
+      files: [5,6,7,18] # Leave empty or remove this line to skip B000 dataset processing 5,6,7,18
+
+  train_sets:
+    - name: 'INR'
+      files: [1,2,3,4] #[1,2,3,4,5,6,7,8]
+    - name: 'CS2'
+      files: []   #[35,36,37,38]
+    - name: 'CX2'
+      files: []   #[34,36,37,38]
+    - name: 'B000'
+      files: [] #  5,6,7,18
+
+  test_sets:
+    - name: 'INR'
+      files: [6]  #[1,2,3,4,5,6,7,8]
+    - name: 'CS2'
+      files: []  #[35,36,37,38]
+    - name: 'CX2'
+      files: []   #[34,36,37,38]
+    - name: 'B000'
+      files: [] # 5,6,7,18
+
+  split_ratios: 0.8 # Train and val split, test uses a separate INR set; 0.8 for train, remaining 0.2 for val
+
+  cap_to_soh: True # Whether to predict SOH in the end
+  80%_truncate: false # Whether to only use the first 80% of data for training and prediction
+  one_step: True     
+
+   # one_step means using [0:50] to predict SOH for the next 100 cycles; and [1:51] to predict the next 100 cycles
+   # autoregression represents GPT-like approach, using [0:50] UI to predict [1:51] UI, then [1:51] UI to predict corresponding SOH
+  soc_range: [0.35, 0.65]
+  window_size: 20  # Can be adjusted later
